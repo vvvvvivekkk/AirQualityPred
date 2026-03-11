@@ -1,0 +1,140 @@
+:root {
+  --bg: #f2f6fb;
+  --card: #ffffff;
+  --ink: #12263a;
+  --muted: #567189;
+  --brand: #005b96;
+  --accent: #0aa1dd;
+  --shadow: 0 12px 24px rgba(18, 38, 58, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(160deg, #edf4ff, #f7fbff 45%, #eaf8f6);
+  color: var(--ink);
+}
+
+.hero {
+  padding: 28px 24px;
+  background: radial-gradient(circle at 15% 0%, #0aa1dd, #005b96 50%, #123a61 100%);
+  color: #fff;
+}
+
+.hero h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+}
+
+.hero p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.layout {
+  max-width: 1200px;
+  margin: 20px auto 40px;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.controls h2,
+.chart-wrap h2 {
+  margin-top: 0;
+}
+
+.grid-2 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input,
+select,
+button {
+  border-radius: 10px;
+  border: 1px solid #c9d7e6;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+button {
+  border: 0;
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #567189;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+.actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status {
+  margin: 12px 0 0;
+  color: var(--muted);
+}
+
+.metrics {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.metric h3 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.metric p {
+  margin: 10px 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.chart {
+  width: 100%;
+  min-height: 320px;
+}
+
+@media (max-width: 720px) {
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .chart {
+    min-height: 260px;
+  }
+}

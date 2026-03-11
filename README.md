@@ -1,181 +1,138 @@
-# 🌍 Air Quality Prediction System
+# Air Quality Prediction System
 
-An end-to-end air quality prediction system using the **Temporal Fusion Transformer (TFT)** model. Predicts PM2.5, PM10, NO₂, CO, and SO₂ levels for multiple time horizons with a FastAPI backend and interactive Streamlit dashboard.
+End-to-end air quality prediction using a Temporal Fusion Transformer (TFT), FastAPI backend, and a static HTML/CSS/JavaScript frontend.
 
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 air_quality_prediction/
-│
 ├── data/
-│   ├── air_quality.csv              # Dataset (generated or real)
-│   └── generate_sample_data.py      # Sample data generator
-│
 ├── models/
-│   ├── tft_model.pth                # Trained model weights
-│   ├── training_metadata.json       # Training run metadata
-│   ├── evaluation_report.json       # Evaluation metrics
-│   └── metrics_log.txt              # Metrics history log
-│
 ├── src/
-│   ├── __init__.py
-│   ├── data_preprocessing.py        # Data cleaning & feature engineering
-│   ├── train_model.py               # TFT model training pipeline
-│   ├── evaluate_model.py            # Model evaluation (RMSE, MAE)
-│   └── predict.py                   # Prediction service module
-│
+│   ├── data_preprocessing.py
+│   ├── train_model.py
+│   ├── evaluate_model.py
+│   └── predict.py
 ├── api/
-│   └── main.py                      # FastAPI REST API
-│
-├── dashboard/
-│   └── app.py                       # Streamlit dashboard
-│
+│   └── main.py
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
 ├── requirements.txt
 └── README.md
 ```
 
----
+## Functional Coverage
 
-## ⚡ Quick Start
+- FR11: TFT model implemented in `src/train_model.py`.
+- FR12: Training uses historical columns: datetime, PM2.5, PM10, NO2, CO, SO2, temperature, humidity, wind_speed.
+- FR13: Predictions supported for next few hours, next day (24h), and up to 72 hours.
+- FR14: RMSE and MAE calculated in `src/evaluate_model.py`.
+- FR15: FastAPI service in `api/main.py` with lazy model loading.
+- FR16: API endpoints for health, hourly, day, and range predictions.
 
-### 1. Install Dependencies
+## API Endpoints
+
+- `GET /` health check
+- `GET /app` frontend entry page
+- `POST /predict-hour`
+- `POST /predict-day`
+- `POST /predict-range`
+- `GET /historical?hours=168`
+- `GET /aqi-categories`
+
+## Example Requests
+
+### Predict next few hours
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict-hour \
+  -H "Content-Type: application/json" \
+  -d '{"hours": 6}'
+```
+
+### Predict next day
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict-day \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+### Predict custom range
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict-range \
+  -H "Content-Type: application/json" \
+  -d '{"start_date": "2026-03-12", "end_date": "2026-03-14"}'
+```
+
+## Example Response (predict-hour)
+
+```json
+{
+  "status": "success",
+  "prediction_type": "hourly",
+  "count": 6,
+  "predictions": [
+    {
+      "datetime": "2026-03-12T10:00:00",
+      "hour": 1,
+      "PM2.5": 34.21,
+      "PM10": 56.14,
+      "NO2": 20.41,
+      "CO": 0.92,
+      "SO2": 8.14,
+      "aqi_category": "Moderate",
+      "aqi_color": "#FFFF00"
+    }
+  ]
+}
+```
+
+## Steps to Run
+
+1. Install dependencies
 
 ```bash
 cd air_quality_prediction
 pip install -r requirements.txt
 ```
 
-### 2. Generate Sample Data
+2. Generate sample data (if needed)
 
 ```bash
 python data/generate_sample_data.py
 ```
 
-This creates `data/air_quality.csv` with ~26,000 hourly records (3 years of synthetic data).
-
-### 3. Train the Model
+3. Train TFT model
 
 ```bash
 python src/train_model.py --epochs 30 --batch-size 64
 ```
 
-**CLI Options:**
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--data` | `data/air_quality.csv` | Path to dataset |
-| `--epochs` | 30 | Max training epochs |
-| `--batch-size` | 64 | Training batch size |
-| `--lr` | 0.001 | Learning rate |
-| `--encoder-length` | 168 | Past time steps (7 days) |
-| `--prediction-length` | 24 | Forecast horizon (1 day) |
-| `--gpus` | 0 | GPU count (0 = CPU) |
-
-### 4. Evaluate the Model
+4. Evaluate model
 
 ```bash
 python src/evaluate_model.py
 ```
 
-Outputs RMSE and MAE metrics overall and per forecast horizon.
-
-### 5. Start the API Server
+5. Run API + frontend server
 
 ```bash
-cd api
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn api.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-API docs available at: **http://localhost:8000/docs**
+6. Open pages
 
-### 6. Run the Dashboard
+- Frontend: `http://127.0.0.1:8000/app`
+- API docs: `http://127.0.0.1:8000/docs`
 
-```bash
-streamlit run dashboard/app.py
-```
+## Notes on Bug Fixes
 
-Dashboard opens at: **http://localhost:8501**
-
----
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/` | Health check |
-| `POST` | `/predict-hour` | Predict next N hours |
-| `POST` | `/predict-day` | Predict next 24 hours |
-| `POST` | `/predict-range` | Predict custom date range |
-| `GET` | `/aqi-categories` | AQI category definitions |
-
-### Example: Predict Next 6 Hours
-
-```bash
-curl -X POST http://localhost:8000/predict-hour \
-  -H "Content-Type: application/json" \
-  -d '{"hours": 6}'
-```
-
-### Example: Predict Custom Range
-
-```bash
-curl -X POST http://localhost:8000/predict-range \
-  -H "Content-Type: application/json" \
-  -d '{"start_date": "2024-06-15", "end_date": "2024-06-18"}'
-```
-
----
-
-## 📊 Dataset Format
-
-The CSV should contain these columns:
-
-| Column | Type | Description |
-|--------|------|-------------|
-| `datetime` | datetime | Timestamp (hourly) |
-| `PM2.5` | float | Fine particulate matter (µg/m³) |
-| `PM10` | float | Coarse particulate matter (µg/m³) |
-| `NO2` | float | Nitrogen dioxide (µg/m³) |
-| `CO` | float | Carbon monoxide (mg/m³) |
-| `SO2` | float | Sulfur dioxide (µg/m³) |
-| `temperature` | float | Temperature (°C) |
-| `humidity` | float | Relative humidity (%) |
-| `wind_speed` | float | Wind speed (m/s) |
-
----
-
-## 🏷️ AQI Categories
-
-Based on PM2.5 concentration:
-
-| Category | PM2.5 Range | Color |
-|----------|-------------|-------|
-| Good | 0 - 12.0 | 🟢 |
-| Moderate | 12.1 - 35.4 | 🟡 |
-| Unhealthy for Sensitive Groups | 35.5 - 55.4 | 🟠 |
-| Unhealthy | 55.5 - 150.4 | 🔴 |
-| Very Unhealthy | 150.5 - 250.4 | 🟣 |
-| Hazardous | 250.5 - 500.0 | 🟤 |
-
----
-
-## 📈 Evaluation Metrics
-
-The system evaluates model performance using:
-- **RMSE** (Root Mean Squared Error) — penalizes large errors
-- **MAE** (Mean Absolute Error) — average absolute prediction error
-
-Metrics are computed:
-- Overall across all predictions
-- Per forecast horizon (hour 1, 6, 12, 24)
-
----
-
-## 🛠️ Tech Stack
-
-- **Model**: Temporal Fusion Transformer (PyTorch Forecasting)
-- **Training**: PyTorch Lightning
-- **API**: FastAPI + Uvicorn
-- **Dashboard**: Streamlit + Plotly
-- **Data**: Pandas, NumPy, Scikit-learn
+- Fixed KeyError on `PM2.5` by normalizing to canonical internal `PM25` and returning `PM2.5` in API output.
+- Preprocessing now sanitizes/validates column names before training and inference.
+- Predictor robustly loads latest checkpoint if available; falls back safely when unavailable.
+- API consistently returns JSON payloads for all prediction endpoints.
+- Frontend fetch logic uses the same host/port as backend to avoid cross-origin and URL mismatch issues.

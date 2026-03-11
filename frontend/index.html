@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Air Quality Dashboard</title>
+  <link rel="stylesheet" href="/frontend/style.css" />
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <h1>Air Quality Prediction Dashboard</h1>
+    <p>Temporal Fusion Transformer forecasts for PM2.5, PM10, NO2, CO, and SO2</p>
+  </header>
+
+  <main class="layout">
+    <section class="controls card">
+      <h2>Prediction Inputs</h2>
+      <div class="grid-2">
+        <label>
+          Hours (1-72)
+          <input id="hoursInput" type="number" min="1" max="72" value="6" />
+        </label>
+        <label>
+          Mode
+          <select id="modeSelect">
+            <option value="hour">Next Few Hours</option>
+            <option value="day">Next Day (24h)</option>
+            <option value="range">Date Range</option>
+          </select>
+        </label>
+        <label>
+          Start Date
+          <input id="startDate" type="date" />
+        </label>
+        <label>
+          End Date
+          <input id="endDate" type="date" />
+        </label>
+      </div>
+      <div class="actions">
+        <button id="predictBtn">Get Prediction</button>
+        <button id="loadHistoricalBtn" class="secondary">Load Historical</button>
+      </div>
+      <p id="statusText" class="status"></p>
+    </section>
+
+    <section class="metrics">
+      <article class="metric card">
+        <h3>Average PM2.5</h3>
+        <p id="avgPm25">-</p>
+      </article>
+      <article class="metric card">
+        <h3>Max PM2.5</h3>
+        <p id="maxPm25">-</p>
+      </article>
+      <article class="metric card">
+        <h3>AQI Category</h3>
+        <p id="aqiCategory">-</p>
+      </article>
+      <article class="metric card">
+        <h3>Count</h3>
+        <p id="predictionCount">-</p>
+      </article>
+    </section>
+
+    <section class="card chart-wrap">
+      <h2>PM2.5 Prediction Chart</h2>
+      <div id="pm25Chart" class="chart"></div>
+    </section>
+
+    <section class="card chart-wrap">
+      <h2>Multi Pollutant Comparison</h2>
+      <div id="multiPollutantChart" class="chart"></div>
+    </section>
+
+    <section class="card chart-wrap">
+      <h2>Historical vs Predicted PM2.5</h2>
+      <div id="historyVsPredChart" class="chart"></div>
+    </section>
+
+    <section class="card chart-wrap">
+      <h2>AQI Category Visualization</h2>
+      <div id="aqiChart" class="chart"></div>
+    </section>
+  </main>
+
+  <script src="/frontend/script.js"></script>
+</body>
+</html>
