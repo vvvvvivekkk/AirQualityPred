@@ -84,7 +84,7 @@ Outputs RMSE and MAE metrics overall and per forecast horizon.
 
 ```bash
 cd api
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 API docs available at: **http://localhost:8000/docs**

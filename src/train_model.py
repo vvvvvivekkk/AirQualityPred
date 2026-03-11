@@ -13,8 +13,16 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import torch
-import pytorch_lightning as pl
-from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
+
+try:
+    # Prefer unified Lightning package to match PyTorch Forecasting model base classes.
+    import lightning.pytorch as pl
+    from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
+except ImportError:
+    # Backward compatibility for environments that still use pytorch_lightning.
+    import pytorch_lightning as pl
+    from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
+
 from pytorch_forecasting import TemporalFusionTransformer, TimeSeriesDataSet
 from pytorch_forecasting.data import GroupNormalizer
 from pytorch_forecasting.metrics import QuantileLoss
@@ -57,12 +65,13 @@ def build_dataset(
     logger.info(f"Dataset split — Train: 0-{train_cutoff}, Val: {train_cutoff}-{val_cutoff}, Test: {val_cutoff}-{n}")
 
     # Define known & unknown reals, categoricals
+    # Note: PM2.5 is renamed to PM25 in preprocessing to avoid '.' characters
     time_varying_known_reals = [
         "hour_sin", "hour_cos", "month_sin", "month_cos",
         "dow_sin", "dow_cos",
     ]
     time_varying_unknown_reals = [
-        "PM2.5", "PM10", "NO2", "CO", "SO2",
+        "PM25", "PM10", "NO2", "CO", "SO2",
         "temperature", "humidity", "wind_speed",
     ]
     static_categoricals = ["group_id"]
@@ -82,7 +91,7 @@ def build_dataset(
     training = TimeSeriesDataSet(
         df[df.time_idx <= train_cutoff],
         time_idx="time_idx",
-        target="PM2.5",
+        target="PM25",
         group_ids=["group_id"],
         max_encoder_length=max_encoder_length,
         max_prediction_length=max_prediction_length,
@@ -308,3 +317,4 @@ if __name__ == "__main__":
     )
 
     print("\n[✓] Training complete!")
+

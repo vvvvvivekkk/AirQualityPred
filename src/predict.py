@@ -112,14 +112,15 @@ class AirQualityPredictor:
             # Filter by same hour
             hour_data = recent[recent["hour"] == hour_of_day]
 
+            # Note: PM2.5 is renamed to PM25 in preprocessing
             if len(hour_data) > 0:
-                pm25 = float(hour_data["PM2.5"].mean())
+                pm25 = float(hour_data["PM25"].mean())
                 pm10 = float(hour_data["PM10"].mean())
                 no2 = float(hour_data["NO2"].mean())
                 co = float(hour_data["CO"].mean())
                 so2 = float(hour_data["SO2"].mean())
             else:
-                pm25 = float(recent["PM2.5"].mean())
+                pm25 = float(recent["PM25"].mean())
                 pm10 = float(recent["PM10"].mean())
                 no2 = float(recent["NO2"].mean())
                 co = float(recent["CO"].mean())
@@ -251,10 +252,11 @@ class AirQualityPredictor:
         context["is_weekend"] = context["is_weekend"].astype(str)
 
         # Create dataset for prediction
+        # Note: PM2.5 is renamed to PM25 in preprocessing to avoid '.' characters
         dataset = TimeSeriesDataSet(
             context,
             time_idx="time_idx",
-            target="PM2.5",
+            target="PM25",
             group_ids=["group_id"],
             max_encoder_length=encoder_length,
             max_prediction_length=min(hours, 24),
@@ -263,7 +265,7 @@ class AirQualityPredictor:
                 if c in context.columns
             ],
             time_varying_unknown_reals=[
-                c for c in ["PM2.5", "PM10", "NO2", "CO", "SO2", "temperature", "humidity", "wind_speed"]
+                c for c in ["PM25", "PM10", "NO2", "CO", "SO2", "temperature", "humidity", "wind_speed"]
                 if c in context.columns
             ],
             time_varying_known_categoricals=["is_weekend"],
@@ -311,8 +313,9 @@ class AirQualityPredictor:
         """Get recent historical data for comparison charts."""
         if self.data is None:
             return pd.DataFrame()
+        # Note: PM2.5 is renamed to PM25 in preprocessing
         return self.data.tail(hours)[
-            ["datetime", "PM2.5", "PM10", "NO2", "CO", "SO2", "temperature", "humidity", "wind_speed"]
+            ["datetime", "PM25", "PM10", "NO2", "CO", "SO2", "temperature", "humidity", "wind_speed"]
         ].copy()
 
 

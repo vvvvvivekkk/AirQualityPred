@@ -1,0 +1,42 @@
+
+============================================================
+Training Run - 2026-03-11T22:36:01.418933
+============================================================
+  trained_at: 2026-03-11T22:36:01.418933
+  epochs: 1
+  batch_size: 64
+  learning_rate: 0.001
+  encoder_length: 168
+  prediction_length: 24
+  best_val_loss: 0.11087190359830856
+  best_checkpoint: C:\Users\11020\Desktop\weather\weather\air_quality_prediction\models\tft_best_epoch=0_val_loss=0.1109.ckpt
+
+============================================================
+Training Run - 2026-03-11T23:33:44.814229
+============================================================
+  trained_at: 2026-03-11T23:33:44.814229
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  encoder_length: 168
+  prediction_length: 24
+  best_val_loss: 0.1058245301246643
+  best_checkpoint: C:\Users\11020\Desktop\weather\weather\air_quality_prediction\models\tft_best_epoch=4_val_loss=0.1058.ckpt
+
+============================================================
+Training Run - 2026-03-12T00:20:07.093027
+============================================================
+  trained_at: 2026-03-12T00:20:07.093027
+  epochs: 5
+  batch_size: 64
+  learning_rate: 0.001
+  encoder_length: 168
+  prediction_length: 24
+  best_val_loss: 0.10777012258768082
+  best_checkpoint: C:\Users\11020\Desktop\weather\weather\air_quality_prediction\models\tft_best_epoch=1_val_loss=0.1078.ckpt
+
+============================================================
+Evaluation - 2026-03-12T00:20:07.881100
+  Overall RMSE: 0.2781
+  Overall MAE: 0.2134
+  Test samples: 24

@@ -100,6 +100,16 @@ def add_aqi_category(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename columns to be compatible with pytorch_forecasting (no '.' characters)."""
+    rename_map = {
+        "PM2.5": "PM25",
+    }
+    df = df.rename(columns=rename_map)
+    logger.info(f"Renamed columns: {rename_map}")
+    return df
+
+
 def normalize_features(df: pd.DataFrame, target_cols: list = None, fit: bool = True, scaler: StandardScaler = None):
     """
     Normalize numeric features using StandardScaler.
@@ -115,6 +125,9 @@ def normalize_features(df: pd.DataFrame, target_cols: list = None, fit: bool = T
     """
     if target_cols is None:
         target_cols = ["PM2.5", "PM10", "NO2", "CO", "SO2", "temperature", "humidity", "wind_speed"]
+
+    # Update target_cols for renamed columns
+    target_cols = ["PM25" if c == "PM2.5" else c for c in target_cols]
 
     existing_cols = [c for c in target_cols if c in df.columns]
 
@@ -200,6 +213,9 @@ def preprocess_pipeline(filepath: str, normalize: bool = True):
     df = add_time_features(df)
     df = add_aqi_category(df)
 
+    # Rename columns to remove '.' characters (pytorch_forecasting requirement)
+    df = rename_columns(df)
+
     scaler = None
     if normalize:
         df, scaler = normalize_features(df)
@@ -221,3 +237,4 @@ if __name__ == "__main__":
     print(f"\nProcessed data shape: {df.shape}")
     print(f"\nSample:\n{df.head()}")
     print(f"\nAQI categories:\n{df['aqi_category'].value_counts()}")
+
