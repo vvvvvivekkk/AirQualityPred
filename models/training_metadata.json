@@ -1,10 +1,10 @@
 {
-  "trained_at": "2026-03-12T01:09:37.068698",
-  "epochs": 1,
+  "trained_at": "2026-03-12T10:14:51.767024",
+  "epochs": 2,
   "batch_size": 64,
   "learning_rate": 0.001,
   "encoder_length": 168,
   "prediction_length": 24,
-  "best_val_loss": 0.11182385683059692,
-  "best_checkpoint": "C:\\Users\\11020\\Desktop\\weather\\weather\\air_quality_prediction\\models\\tft_best_epoch=0_val_loss=0.1118.ckpt"
+  "best_val_loss": 0.1102646067738533,
+  "best_checkpoint": "C:\\Users\\chunk\\Desktop\\Viv\\AirQualityPred\\models\\tft_best_epoch=0_val_loss=0.1103.ckpt"
 }
